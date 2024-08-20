@@ -59,19 +59,30 @@ app.get("/users", async (req, res) => {
 
 app.put("/user/:userId", async (req, res) => {
     try {
-        console.log("Connecting to MongoDB...");
+        console.log("Received update request for user ID:", req.params.userId);
+        console.log("Data to update:", req.body);
+
         const client = new MongoClient(URL);
         await client.connect();
-        console.log("Connected to MongoDB");
+
         const db = client.db("Nodejs");
         const collection = db.collection("users");
-        console.log("Inserting user...");
-        await collection.updateOne({_id: new ObjectId(req.params.userId)},{$set: req.body})
-        console.log("User Updated");
+
+        const result = await collection.updateOne(
+            { _id: new ObjectId(req.params.userId) },
+            { $set: req.body }
+        );
+
+        console.log("Update result:", result);
         await client.close();
-        console.log("Connection closed");
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ Message: "User not found" });
+        }
+
         res.json({ Message: "User Updated!" });
     } catch (error) {
+        console.error("Error updating user:", error.message);
         res.status(500).json({ Message: "Something went wrong", error: error.message });
     }
 });
