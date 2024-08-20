@@ -6,7 +6,8 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:5173"
+    // origin: "http://localhost:5173"
+    origin: "https://courageous-moonbeam-aafce4.netlify.app/"
 }));
 
 /* const URL = "mongodb+srv://ajith0623:Ajithkkumar0695@cluster0.rw6jcmo.mongodb.net/"; */
